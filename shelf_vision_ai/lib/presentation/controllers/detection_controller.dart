@@ -22,6 +22,10 @@ class DetectionController extends ChangeNotifier {
 
   /// Throttle: track when the last frame was sent for inference.
   DateTime? _lastFrameTime;
+
+  /// Bumped on every start/stop so results from frames captured before a
+  /// pause are discarded instead of being drawn over the new camera view.
+  int _liveSession = 0;
   static const _minFrameIntervalMs = 1000 ~/ AppConstants.targetFps;
 
   InferenceFrameResult? get lastResult => _lastResult;
@@ -79,6 +83,11 @@ class DetectionController extends ChangeNotifier {
     if (_isDetecting || !cameraService.isInitialized) return;
     _isDetecting = true;
     _error = null;
+    // Never show boxes from before the pause: they belong to an old camera position.
+    _liveSession++;
+    _lastResult = null;
+    _lastFrameTime = null;
+    AiPlatformService.instance.resetTiming();
     notifyListeners();
 
     cameraService.startImageStream(_onFrame);
@@ -87,6 +96,8 @@ class DetectionController extends ChangeNotifier {
   void stopLiveDetection() {
     if (!_isDetecting) return;
     _isDetecting = false;
+    _liveSession++;
+    _lastResult = null;
     cameraService.stopImageStream();
     notifyListeners();
   }
@@ -100,17 +111,18 @@ class DetectionController extends ChangeNotifier {
     }
     if (AiPlatformService.instance.isBusy) return;
     _lastFrameTime = now;
+    final session = _liveSession;
 
     AiPlatformService.instance
         .processFrame(image, cameraService.sensorOrientation)
         .then((result) {
-          if (result == null || !_isDetecting) return;
+          if (result == null || !_isDetecting || session != _liveSession) return;
           _lastResult = result;
           _error = null;
           notifyListeners();
         })
         .catchError((Object e) {
-          if (!_isDetecting) return;
+          if (!_isDetecting || session != _liveSession) return;
           _error = 'Frame error: $e';
           notifyListeners();
         });

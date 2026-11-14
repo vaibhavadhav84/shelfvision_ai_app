@@ -24,6 +24,8 @@ class AiPlatformService {
     return _pipeline.processFrame(YuvFrame.fromCameraImage(frame), sensorOrientation);
   }
 
+  void resetTiming() => _pipeline.resetTiming();
+
   Future<InferenceFrameResult> processImageFile(File imageFile) =>
       _pipeline.processImageFile(imageFile.path);
 

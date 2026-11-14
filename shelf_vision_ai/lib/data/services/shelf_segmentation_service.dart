@@ -4,6 +4,7 @@ import '../models/segmentation_result.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/image_utils.dart';
 import 'model_postprocessing_service.dart';
+import 'ort_tensor_reader.dart';
 
 /// Model B: segment_shelf_rows.onnx (YOLO11 seg, class: row).
 /// Runs synchronously — it is only ever called from the inference worker isolate.
@@ -16,7 +17,7 @@ class ShelfSegmentationService {
   void initialize(Uint8List modelBytes) {
     if (_session != null) return;
     final options = OrtSessionOptions()
-      ..setIntraOpNumThreads(2)
+      ..setIntraOpNumThreads(4)
       ..setSessionGraphOptimizationLevel(GraphOptimizationLevel.ortEnableAll);
     _session = OrtSession.fromBuffer(modelBytes, options);
     options.release();
@@ -36,8 +37,8 @@ class ShelfSegmentationService {
       if (outputs.length < 2 || outputs[0] == null || outputs[1] == null) {
         throw Exception('Shelf segmentation model returned invalid outputs');
       }
-      final out0 = ModelPostprocessingService.flatten(outputs[0]!.value);
-      final protos = ModelPostprocessingService.flatten(outputs[1]!.value);
+      final out0 = OrtTensorReader.readFloat32(outputs[0]!);
+      final protos = OrtTensorReader.readFloat32(outputs[1]!);
       return _postprocessor.parseSegmentationOutput(out0, protos, lb, sw.elapsedMicroseconds / 1000.0);
     } finally {
       for (final o in outputs) {

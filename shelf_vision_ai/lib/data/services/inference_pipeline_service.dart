@@ -74,12 +74,19 @@ class InferencePipelineService {
       final now = DateTime.now();
       final last = _lastResultTime;
       _lastResultTime = now;
-      final ms = last == null ? 0 : now.difference(last).inMilliseconds;
+      // First result after (re)start has no previous timestamp: estimate from
+      // the worker's own processing time instead of reporting 0 fps.
+      final double ms = last == null
+          ? r.totalInferenceMs
+          : now.difference(last).inMicroseconds / 1000.0;
       return r.copyWith(fps: ms > 0 ? 1000.0 / ms : 0.0);
     } finally {
       _isProcessing = false;
     }
   }
+
+  /// Call when live detection stops so a pause isn't counted as a slow frame.
+  void resetTiming() => _lastResultTime = null;
 
   Future<InferenceFrameResult> processImageFile(String path) {
     if (!_initialized) throw StateError('Models not loaded');
@@ -165,8 +172,15 @@ void _workerMain(_WorkerInit init) {
       final LetterboxTensor lb = job is _FrameJob
           ? preprocessor.preprocessYuvFrame(job.frame, job.rotation)
           : preprocessor.preprocessImageFile((job as _FileJob).path);
+      final double tPre = sw.elapsedMicroseconds / 1000.0;
       final DetectionResult det = detection.runInference(lb);
+      final double tDet = sw.elapsedMicroseconds / 1000.0;
       final SegmentationResult seg = segmentation.runInference(lb);
+      final double tSeg = sw.elapsedMicroseconds / 1000.0;
+      // ignore: avoid_print
+      print('ShelfVision timing: preprocess ${tPre.toStringAsFixed(0)} ms, '
+          'detect ${(tDet - tPre).toStringAsFixed(0)} ms, '
+          'segment ${(tSeg - tDet).toStringAsFixed(0)} ms');
       init.replyPort.send(_WorkerReply(
         msg.id,
         result: InferenceFrameResult(

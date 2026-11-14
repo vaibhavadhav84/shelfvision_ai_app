@@ -61,14 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildHeroSection(context),
-                            const SizedBox(height: AppSpacing.lg),
+                            const SizedBox(height: AppSpacing.md),
                             _buildStatusCards(context, controller),
-                            const SizedBox(height: AppSpacing.lg),
+                            const SizedBox(height: AppSpacing.md),
                             _buildCapabilitiesCard(context),
                             const Spacer(),
-                            const SizedBox(height: AppSpacing.lg),
                             _buildActionButtons(context, controller),
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(height: AppSpacing.sm),
                             _buildFooter(context),
                           ],
                         ),
@@ -91,104 +90,151 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCapabilitiesCard(BuildContext context) {
     final p = context.palette;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: p.surfaceRaised,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: p.hairline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.auto_awesome, size: 16, color: p.accent),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'AI DETECTION CAPABILITIES',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                    color: p.textSecondary,
+          Padding(
+            padding: const EdgeInsets.only(left: 4, right: 4, bottom: AppSpacing.md, top: 2),
+            child: Row(
+              children: [
+                Icon(Icons.auto_awesome, size: 16, color: p.accent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'AI DETECTION CAPABILITIES',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: p.textSecondary,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: p.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '2 Models Active',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: p.accent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          _featureRow(
+          _featureTile(
             context,
             icon: Icons.inventory_2_outlined,
             color: AppColors.product,
             title: 'Product Detection',
-            subtitle: 'Model A • YOLO11n bounding boxes',
+            subtitle: 'Detects shelf items with bounding boxes',
+            badge: 'Model A',
           ),
-          const SizedBox(height: AppSpacing.sm),
-          _featureRow(
+          const SizedBox(height: 10),
+          _featureTile(
             context,
             icon: Icons.check_box_outline_blank,
             color: AppColors.empty,
             title: 'Empty Space Alert',
-            subtitle: 'Model A • Out-of-stock gap detection',
+            subtitle: 'Flags out-of-stock gaps in real-time',
+            badge: 'Model A',
           ),
-          const SizedBox(height: AppSpacing.sm),
-          _featureRow(
+          const SizedBox(height: 10),
+          _featureTile(
             context,
             icon: Icons.table_rows_outlined,
             color: AppColors.row,
             title: 'Shelf Row Segmentation',
-            subtitle: 'Model B • YOLO11n-seg instance masks',
+            subtitle: 'Segments shelf rows with polygon masks',
+            badge: 'Model B',
           ),
         ],
       ),
     );
   }
 
-  Widget _featureRow(
+  Widget _featureTile(
     BuildContext context, {
     required IconData icon,
     required Color color,
     required String title,
     required String subtitle,
+    required String badge,
   }) {
     final p = context.palette;
-    return Row(
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(8),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: p.surface.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          child: Icon(icon, color: color, size: 18),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: p.textPrimary,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: p.textPrimary,
+                    letterSpacing: 0.1,
+                  ),
                 ),
-              ),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: p.textTertiary,
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: p.textTertiary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              badge,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

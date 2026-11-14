@@ -1,0 +1,53 @@
+name: shelf_vision_ai
+description: "ShelfVision AI - Supermarket shelf detection using YOLO11 models"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  camera: ^0.11.0
+  permission_handler: ^11.3.1
+  onnxruntime: ^1.4.0
+  image: ^4.3.0
+  path_provider: ^2.1.4
+  provider: ^6.1.2
+  flutter_animate: ^4.5.0
+  video_player: ^2.9.2
+  image_picker: ^1.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  mockito: ^5.4.4
+  build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    # Only the ONNX exports ship in the APK; the original .pt files stay in
+    # assets/models/ for reference but are not bundled (saves ~11 MB).
+    - assets/models/detect_product_empty_space.onnx
+    - assets/models/segment_shelf_rows.onnx
+    - assets/labels/
+    - assets/icon/app_icon.png
+    - assets/images/
+
+# App launcher icon (regenerate with: dart run flutter_launcher_icons)
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 24
+  # Android 8+ adaptive icon: art in the safe zone + gradient background,
+  # so it stays sharp under circle / squircle / rounded-square masks.
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  adaptive_icon_background: "assets/icon/app_icon_background.png"
+  # Android 13+ themed (monochrome) icons
+  adaptive_icon_monochrome: "assets/icon/app_icon_foreground.png"

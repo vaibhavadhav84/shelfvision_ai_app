@@ -30,7 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
       final LostDataResponse lost = await ImagePicker().retrieveLostData();
       final path = lost.file?.path;
       if (path == null || !mounted) return;
-      Navigator.pushNamed(context, '/capture', arguments: {'recoveredImagePath': path});
+      Navigator.pushNamed(
+        context,
+        '/capture',
+        arguments: {'recoveredImagePath': path},
+      );
     } catch (_) {
       // Nothing to recover.
     }
@@ -49,7 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: gutter, vertical: AppSpacing.lg),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: gutter,
+                    vertical: AppSpacing.lg,
+                  ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight - (AppSpacing.lg * 2),
@@ -100,7 +107,12 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 4, right: 4, bottom: AppSpacing.md, top: 2),
+            padding: const EdgeInsets.only(
+              left: 4,
+              right: 4,
+              bottom: AppSpacing.md,
+              top: 2,
+            ),
             child: Row(
               children: [
                 Icon(Icons.auto_awesome, size: 16, color: p.accent),
@@ -117,7 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: p.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
@@ -209,10 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: p.textTertiary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: p.textTertiary),
                 ),
               ],
             ),
@@ -252,12 +264,20 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
-              BoxShadow(color: const Color(0xFF1DE9B6).withValues(alpha: 0.25), blurRadius: 24, spreadRadius: 2),
+              BoxShadow(
+                color: const Color(0xFF1DE9B6).withValues(alpha: 0.25),
+                blurRadius: 24,
+                spreadRadius: 2,
+              ),
             ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
-            child: Image.asset('assets/icon/app_icon.png', fit: BoxFit.cover, filterQuality: FilterQuality.high),
+            child: Image.asset(
+              'assets/icon/app_icon.png',
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -272,7 +292,9 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 8),
         Text(
           'Real-time shelf detection powered by YOLO11',
-          style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.secondary),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.secondary,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -283,7 +305,10 @@ class _HomeScreenState extends State<HomeScreen> {
   // Status cards
   // ---------------------------------------------------------------------------
 
-  Widget _buildStatusCards(BuildContext context, DetectionController controller) {
+  Widget _buildStatusCards(
+    BuildContext context,
+    DetectionController controller,
+  ) {
     // Equal-width cards that share the row (never overflow on narrow phones),
     // stretched to the same height even when a label wraps.
     final pending = controller.isLoading;
@@ -329,35 +354,54 @@ class _HomeScreenState extends State<HomeScreen> {
   // Action buttons
   // ---------------------------------------------------------------------------
 
-  Widget _buildActionButtons(BuildContext context, DetectionController controller) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    DetectionController controller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton.icon(
-          onPressed: controller.isLoading ? null : () => Navigator.pushNamed(context, '/live'),
+          onPressed: controller.isLoading
+              ? null
+              : () => Navigator.pushNamed(context, '/live'),
           icon: const Icon(Icons.videocam),
           label: const Text('Start Live Detection'),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         const SizedBox(height: 16),
         OutlinedButton.icon(
-          onPressed: controller.isLoading ? null : () => Navigator.pushNamed(context, '/capture'),
+          onPressed: controller.isLoading
+              ? null
+              : () => Navigator.pushNamed(context, '/capture'),
           icon: const Icon(Icons.camera_alt),
           label: const Text('Capture Shelf Image'),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-        if (controller.isLoading) ...[const SizedBox(height: 16), const Center(child: CircularProgressIndicator())],
+        if (controller.isLoading) ...[
+          const SizedBox(height: 16),
+          const Center(child: CircularProgressIndicator()),
+        ],
         if (controller.error != null) ...[
           const SizedBox(height: 12),
           Text(
             controller.error!,
-            style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 13),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.error,
+              fontSize: 13,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -372,9 +416,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFooter(BuildContext context) {
     return Text(
       'Using YOLO11n + YOLO11n-seg | ONNX Runtime',
-      style: Theme.of(
-        context,
-      ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
       textAlign: TextAlign.center,
     );
   }
@@ -402,11 +446,16 @@ class _StatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final Color color = pending ? AppColors.warning : (isOk ? AppColors.product : AppColors.danger);
+    final Color color = pending
+        ? AppColors.warning
+        : (isOk ? AppColors.product : AppColors.danger);
     final String status = pending ? 'Loading' : (isOk ? okText : failText);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.md,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -419,7 +468,10 @@ class _StatusCard extends StatelessWidget {
                       height: 26,
                       child: Padding(
                         padding: const EdgeInsets.all(3),
-                        child: CircularProgressIndicator(strokeWidth: 2.2, color: color),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.2,
+                          color: color,
+                        ),
                       ),
                     )
                   : Icon(
@@ -433,7 +485,11 @@ class _StatusCard extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11.5, height: 1.3, color: p.textSecondary),
+              style: TextStyle(
+                fontSize: 11.5,
+                height: 1.3,
+                color: p.textSecondary,
+              ),
             ),
             const SizedBox(height: 3),
             Text(
@@ -441,7 +497,11 @@ class _StatusCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: color),
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
             ),
           ],
         ),

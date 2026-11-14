@@ -41,25 +41,34 @@ class DetectionController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. Camera permission
-      final status = await Permission.camera.request();
-      _cameraPermissionGranted = status.isGranted;
-      if (!_cameraPermissionGranted) {
-        throw Exception('Camera permission denied');
-      }
-
-      // 2. Camera hardware
-      await cameraService.initialize();
-
-      // 3. AI models
+      // 1. AI Models initialize first (independent of camera or simulator status)
       await AiPlatformService.instance.initialize();
       _modelLoaded = AiPlatformService.instance.isLoaded;
     } catch (e) {
-      _error = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      _error = 'Failed to load AI models: $e';
     }
+
+    try {
+      // 2. Camera permission request
+      final status = await Permission.camera.request();
+      _cameraPermissionGranted = status.isGranted;
+    } catch (_) {
+      _cameraPermissionGranted = false;
+    }
+
+    // 3. Camera hardware initialization (if permission granted)
+    if (_cameraPermissionGranted) {
+      try {
+        await cameraService.initialize();
+      } catch (e) {
+        // e.g. Simulator without camera hardware or hardware busy
+        _cameraPermissionGranted = false;
+        _error ??= 'Camera hardware unavailable: $e';
+      }
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   // ---------------------------------------------------------------------------

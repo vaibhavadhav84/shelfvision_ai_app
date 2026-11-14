@@ -49,6 +49,12 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>ShelfVision AI requires camera access to detect products, empty spaces, and shelf rows in real-time.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ShelfVision AI requires microphone access for shelf video recording.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ShelfVision AI requires photo library access to pick and analyze shelf images.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

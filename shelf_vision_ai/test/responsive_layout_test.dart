@@ -6,6 +6,7 @@ import 'package:shelf_vision_ai/data/models/detection_result.dart';
 import 'package:shelf_vision_ai/data/models/inference_frame_result.dart';
 import 'package:shelf_vision_ai/data/models/segmentation_result.dart';
 import 'package:shelf_vision_ai/presentation/controllers/detection_controller.dart';
+import 'package:shelf_vision_ai/presentation/controllers/theme_controller.dart';
 import 'package:shelf_vision_ai/presentation/screens/home_screen.dart';
 import 'package:shelf_vision_ai/presentation/screens/result_screen.dart';
 import 'package:shelf_vision_ai/presentation/widgets/detection_summary_card.dart';
@@ -45,8 +46,11 @@ Future<void> _pump(WidgetTester tester, Size size, ThemeData theme, Widget home,
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    ChangeNotifierProvider(
-      create: (_) => DetectionController(), // not initialized: no camera in tests
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => DetectionController()),
+      ],
       child: MaterialApp(
         theme: theme,
         builder: (context, child) => MediaQuery(

@@ -19,9 +19,22 @@ android {
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // No ndk.abiFilters here: it conflicts with `flutter build apk --split-per-abi`.
-        // Note: the onnxruntime plugin ships native libs for arm64-v8a and
-        // armeabi-v7a only, so test on a real ARM device (not an x86 emulator).
+    }
+
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module"
+            )
+        }
     }
 
     buildTypes {
